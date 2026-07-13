@@ -1,10 +1,12 @@
 terraform {
   required_version = ">=1.6.0"
+  # terraform core version
 
   required_providers {
     azurerm = {
         source = "hashicorp/azurerm"
         version = "~> 4.0"
+        # azurerm provider version
     }
 
     random = {
@@ -20,7 +22,7 @@ provider "azurerm" {
 
 data "azurerm_client_config" "current" {}
 
-resource "random_integer" "name" {
+resource "random_integer" "suffix" {
   min = 10000
   max = 99999
   # this is so I don't have to worry about giving my resource globally unique names
@@ -558,7 +560,81 @@ resource "azurerm_private_endpoint" "sql_private_endpoint" {
   subnet_id = azurerm_subnet.private_endpoint_subnet.id
 
   private_service_connection {
-    name = "psc-sql-${local.name_prefix}"\
-    privis_connecprivate_connection_resource_id = 
+    name = "psc-sql-${local.name_prefix}"
+    private_connection_resource_id = azurerm_mssql_server.sql_server.id
+    subresource_names = ["sqlServer"]
+    is_manual_connection = false
+    }
+
+    private_dns_zone_group {
+      name = "sql-private-dns-zone-group"
+
+      private_dns_zone_ids = [
+        azurerm_private_dns_zone.sql_private_dns.id
+      ]
+    }
+
+    tags = local.common_tags
+}
+
+# -------------------------------------
+# Storage Account for Static Content
+# -------------------------------------
+
+resource "azurerm_storage_account" "static" {
+  name = "stacc${random_integer.suffix.result}${var.environment}"
+  resource_group_name = azurerm_resource_group.rg.name
+  location = azurerm_resource_group.rg.location
+  account_tier = "Standard"
+  account_replication_type = "ZRS"
+
+  min_tls_version = "TLS1_2"
+  allow_nested_items_to_be_public = true
+
+  static_website {
+    index_document = "index.html"
   }
+
+  tags = local.common_tags
+}
+
+# -------------------------------------
+# Action Group and Alert 
+# -------------------------------------
+
+resource "azurerm_monitor_action_group" "main" {
+  name = "ag_alerts-${local.name_prefix}"
+  resource_group_name = azurerm_resource_group.rg.name
+  short_name = "alerts"
+
+  email_receiver {
+    name = "Primary-Admin-Email"
+    email_address = var.alert_email
+  }
+
+  tags = local.common_tags
+}
+
+resource "azurerm_monitor_metric_alert" "high_cpu_vmss" {
+  name = "alert-high-cpu-vmss-${local.name_prefix}"
+  resource_group_name = azurerm_resource_group.rg.name
+  scopes = [azurerm_linux_virtual_machine_scale_set.vmss.id]
+  description = "Alert when average VMSS CPU is greater than 70%"
+  severity = 2
+  frequency = "PT1M"
+  window_size = "PT5M"
+
+  criteria {
+    metric_namespace = "Microsoft.Compute/virtualMachineScaleSets"
+    metric_name = "Percentage CPU"
+    aggregation = "Average"
+    operator = "GreaterThan"
+    threshold = 70
+  }
+
+  action {
+    action_group_id = azurerm_monitor_action_group.main.id
+  }
+
+  tags = local.common_tags
 }
