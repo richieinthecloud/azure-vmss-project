@@ -5,8 +5,7 @@ location = "eastus"
 
 admin_username = "richieazureadmin"
 
-ssh_public_key "ssh-rsa
-[replace_with_my_public_key]"
+ssh_public_key = "ssh-rsa-[replace_with_my_public_key]"
 
 resume_name = "Richard Alvarez"
 
@@ -19,4 +18,4 @@ sql_admin_username = "richiesqladmin"
 sql_database_sku = "GP_Gen5_2"
 sql_zone_redundant = true
 
-alert_email = "example@example.com"
+alert_email = "richie.alvarez94@outlook.com"
