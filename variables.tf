@@ -46,7 +46,7 @@ variable "vmss_sku" {
   default = "Standard_B1s"
 }
 
-variable "vmss_initial_instane_count" {
+variable "vmss_initial_instance_count" {
   description = "Initial number of VMSS instances."
   type = number
   default = 2
