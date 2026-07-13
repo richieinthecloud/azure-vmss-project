@@ -270,7 +270,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
   resource_group_name = azurerm_resource_group.rg.name
 
   sku = var.vmss_sku
-  instances = var.vmss_initial_instane_count
+  instances = var.vmss_initial_instance_count
   zones = ["1", "2", "3"]
 
   admin_username = var.admin_username
@@ -384,7 +384,7 @@ resource "azurerm_monitor_autoscale_setting" "vmss_autoscale" {
     name = "cpu-autoscale-profile"
 
     capacity {
-      default = var.vmss_initial_instane_count
+      default = var.vmss_initial_instance_count
       minimum = var.vmss_min_instance_count
       maximum = var.vmss_max_instance_count
     }
@@ -589,7 +589,7 @@ resource "azurerm_storage_account" "static" {
   account_replication_type = "ZRS"
 
   min_tls_version = "TLS1_2"
-  allow_nested_items_to_be_public = true
+  allow_nested_items_to_be_public = true # static website hosting needs public blob r ead
 
   static_website {
     index_document = "index.html"
