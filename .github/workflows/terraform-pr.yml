@@ -17,11 +17,11 @@ jobs:
   terraform-pr:
     name: Terraform Plan
     runs-on: ubuntu-latest
-    environment: dev
+    environment: vmss-demo
 
     defaults:
       run:
-        working-directory: environments/dev
+        working-directory: environments/vmss-demo
 
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
