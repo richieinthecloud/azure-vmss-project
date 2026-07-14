@@ -71,18 +71,37 @@ resource "azurerm_subnet" "appgw_subnet" {
   address_prefixes = ["10.10.1.0/24"]
 }
 
+<<<<<<< HEAD
 resource "azurerm_subnet" "vmss_subnet" {
   name = "subnet-vmss"
+=======
+resource "azurerm_subnet" "vmss_web_subnet" {
+  name = "web_subnet-vmss"
+>>>>>>> 8a04d2a (Refactoring Terraform code to better match Terraform best practices)
   resource_group_name = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes = ["10.10.2.0/24"]
 }
 
+<<<<<<< HEAD
+=======
+resource "azurerm_subnet" "vmss_app_subnet" {
+  name = "app_subnet-vmss"
+  resource_group_name = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes = ["10.10.3.0/24"]
+}
+
+>>>>>>> 8a04d2a (Refactoring Terraform code to better match Terraform best practices)
 resource "azurerm_subnet" "private_endpoint_subnet" {
   name = "subnet-pe"
   resource_group_name = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
+<<<<<<< HEAD
   address_prefixes = ["10.10.3.0/24"]
+=======
+  address_prefixes = ["10.10.4.0/24"]
+>>>>>>> 8a04d2a (Refactoring Terraform code to better match Terraform best practices)
 
   private_endpoint_network_policies = "Disabled"
 }
@@ -92,7 +111,11 @@ resource "azurerm_subnet" "bastion_subnet" {
   name = "AzureBastionSubnet"
   resource_group_name = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
+<<<<<<< HEAD
   address_prefixes = ["10.10.4.0/26"]
+=======
+  address_prefixes = ["10.10.5.0/26"]
+>>>>>>> 8a04d2a (Refactoring Terraform code to better match Terraform best practices)
 }
 
 # -------------------------------------
@@ -149,8 +172,18 @@ resource "azurerm_network_security_rule" "deny_ssh_from_internet" {
   network_security_group_name = azurerm_network_security_group.vmss_nsg.name
 }
 
+<<<<<<< HEAD
 resource "azurerm_subnet_network_security_group_association" "vmss_nsg_assoc" {
     subnet_id = azurerm_subnet.vmss_subnet.id
+=======
+resource "azurerm_subnet_network_security_group_association" "vmss_nsg_assoc1" {
+    subnet_id = azurerm_subnet.vmss_web_subnet.id
+    network_security_group_id = azurerm_network_security_group.vmss_nsg1.id
+}
+
+resource "azurerm_subnet_network_security_group_association" "vmss_nsg_assoc2" {
+    subnet_id = azurerm_subnet.vmss_app_subnet.id
+>>>>>>> 8a04d2a (Refactoring Terraform code to better match Terraform best practices)
     network_security_group_id = azurerm_network_security_group.vmss_nsg.id
 }
 
@@ -265,7 +298,11 @@ resource "azurerm_application_gateway" "appgw" {
 # -------------------------------------
 
 resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
+<<<<<<< HEAD
   name = "vmss-${local.name_prefix}"
+=======
+  name = "web-vmss-${local.name_prefix}"
+>>>>>>> 8a04d2a (Refactoring Terraform code to better match Terraform best practices)
   location = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
@@ -300,11 +337,19 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
   }
 
   network_interface {
+<<<<<<< HEAD
     name = "nic-vmss"
     primary = true
 
     ip_configuration {
       name = "ipconfig-vmss"
+=======
+    name = "nic-vmss-web"
+    primary = true
+
+    ip_configuration {
+      name = "ipconfig-vmss-web"
+>>>>>>> 8a04d2a (Refactoring Terraform code to better match Terraform best practices)
       primary = true
       subnet_id = azurerm_subnet.vmss_subnet.id
 
@@ -589,7 +634,11 @@ resource "azurerm_storage_account" "static" {
   account_replication_type = "ZRS"
 
   min_tls_version = "TLS1_2"
+<<<<<<< HEAD
   allow_nested_items_to_be_public = true # static website hosting needs public blob r ead
+=======
+  allow_nested_items_to_be_public = true
+>>>>>>> 8a04d2a (Refactoring Terraform code to better match Terraform best practices)
 
   static_website {
     index_document = "index.html"
@@ -637,4 +686,8 @@ resource "azurerm_monitor_metric_alert" "high_cpu_vmss" {
   }
 
   tags = local.common_tags
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 8a04d2a (Refactoring Terraform code to better match Terraform best practices)

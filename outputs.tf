@@ -41,4 +41,8 @@ output "key_vault_name" {
 output "storage_static_website_endpoint" {
     description = "Static website endpoint for the storage account."
     value = azurerm_storage_account.static.primary_web_endpoint 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 8a04d2a (Refactoring Terraform code to better match Terraform best practices)

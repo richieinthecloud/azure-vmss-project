@@ -85,8 +85,4 @@ variable "sql_zone_redundant" {
 variable "alert_email" {
   description = "Email address for Azure Monitor action group alerts."
   type = string
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 8a04d2a (Refactoring Terraform code to better match Terraform best practices)

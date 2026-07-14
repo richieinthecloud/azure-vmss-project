@@ -18,4 +18,8 @@ sql_admin_username = "richiesqladmin"
 sql_database_sku = "GP_Gen5_2"
 sql_zone_redundant = true
 
+<<<<<<< HEAD
 alert_email = "richie.alvarez94@outlook.com"
+=======
+alert_email = "richie.alvarez94@outlook.com"
+>>>>>>> 8a04d2a (Refactoring Terraform code to better match Terraform best practices)

@@ -1,13 +1,13 @@
 variable "project_name" {
   description = "Name of the project."
   type = string
-  default = "vmss-project"
+  default = "vmss-demo"
 }
 
 variable "environment" {
   description = "Environment name."
   type = string
-  default = "dev2"
+  default = "dr"
 }
 
 variable "owner" {
@@ -19,7 +19,7 @@ variable "owner" {
 variable "location" {
   description = "Azure region."
   type = string
-  default = "eastus2"
+  default = "westus"
 }
 
 variable "admin_username" {
@@ -49,7 +49,7 @@ variable "vmss_sku" {
 variable "vmss_initial_instance_count" {
   description = "Initial number of VMSS instances."
   type = number
-  default = 2
+  default = 1
 }
 
 variable "vmss_min_instance_count" {
@@ -85,8 +85,4 @@ variable "sql_zone_redundant" {
 variable "alert_email" {
   description = "Email address for Azure Monitor action group alerts."
   type = string
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 8a04d2a (Refactoring Terraform code to better match Terraform best practices)
