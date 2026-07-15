@@ -1,7 +1,7 @@
 # azure-vmss-project
 Architected a highly available Azure cloud environment that handles thousands of requests per hour using auto-scaling and load balancing. This helps to reduce operational costs during non-peak hours while also maintaining 99.99% uptime.
 
-# Still a work in progress. Working on resources in the main.tf at the moment. 
+# Still a work in progress. Presently refactoring my project to better reflect Terraform best practice.
 
 # Basic traffic flow
 - Internet traffic hits the Application Gateway (+WAF) and it gets distributed amongst the Web tier Virtual Machine Scale Set. We have NSGs in place to make sure only traffic over port 80 and port 443 is allowed. 
