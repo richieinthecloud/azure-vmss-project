@@ -1,37 +1,14 @@
-variable "name_prefix" {
-  description = "Naming prefix applied to all intneral load balancer resources."
-  type = string
+output "public_ip_address" {
+    description = "Public IP address of the Application Gateway."
+    value = azurerm_public_ip.appgw.ip_address
 }
 
-variable "resource_group_name" {
-  description = "Resource group in which we will create the internal load balancer."
-  type = string
+output "application_gateway_id" {
+  description = "ID of the Application Gateway."
+  value = azurerm_application_gateway.appgw.id
 }
 
-variable "location" {
-  description = "Azure region for the internal load balancer."
-  type = string
-}
-
-variable "tags" {
-  description = "Common tags applied to all resources."
-  type = map(string)
-  default = {}
-}
-
-variable "subnet_id" {
-  description = "ID of the app tier subnet the internal load balancer's frontend IP is placed in."
-  type = string
-}
-
-variable "backend_port" {
-    description = "Port the app tier listens on."
-    type = number
-    default = 80
-}
-
-variable "availability_zones" {
-  description = "Availability zones for the internal load balancer's frontend IP. . Pass an empty list in regions without Availability Zone support (Like West US.)"
-  type = list(string)
-  default = ["1", "2", "3"]
+output "backend_address_pool_id" {
+    description = "ID of the Application Gateway backend address pool that the web tier VMSS attaches to."
+    value = one(azurerm_application_gateway.appgw.backend_address_pool).id
 }

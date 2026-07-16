@@ -1,2 +1,27 @@
-# dr will be in west us since that's the paired region
-# might even decide to do Central US
+project_name = "vmss-demo"
+environment  = "dr"
+owner        = "Richie"
+location     = "westus"
+
+admin_username = "richieazureadmin"
+ssh_public_key = "ssh-rsa-REPLACE_WITH_MY_PUBLIC_KEY"
+
+resume_name = "Richard Alvarez"
+
+vmss_sku = "Standard_B1s"
+
+web_initial_instance_count = 1
+web_min_instance_count     = 1
+web_max_instance_count     = 3
+
+app_initial_instance_count = 1
+app_min_instance_count     = 1
+app_max_instance_count     = 3
+
+sql_admin_username = "richiesqladmin"
+sql_database_sku   = "GP_Gen5_2"
+sql_zone_redundant = false
+
+kv_purge_protection_enabled = true
+
+alert_email = "richie.alvarez94@outlook.com"
