@@ -1,88 +1,62 @@
-variable "project_name" {
-  description = "Name of the project."
+variable "name_prefix" {
+  description = "Naming prefix applied to all networking resources."
   type = string
-  default = "vmss-project"
+
 }
 
-variable "environment" {
-  description = "Environment name."
+variable "resource_group_name" {
+  description = "Resource group in which we will create networking resources."
   type = string
-  default = "dev2"
-}
 
-variable "owner" {
-  description = "Owner tag value."
-  type = string
-  default = "Richard"
 }
 
 variable "location" {
   description = "Azure region."
   type = string
-  default = "eastus2"
+
 }
 
-variable "admin_username" {
-  description = "Azure admin username for VMSS instances."
-  type = string
-  default = "richieazureadmin"
+variable "tags" {
+  description = "Common tags applied to all resources."
+  type = map(string)
+  default = {}
+
 }
 
-variable "ssh_public_key" {
-  description = "SSH public key used to access the VMSS instances through Azure Bastion."
-  type = string
-  sensitive = true
+variable "address_space" {
+  description = "Address space for the virtual network."
+  type = list(string)
+  default = ["10.10.0.0/16"]
+
 }
 
-variable "resume_name" {
-  description = "Name displayed on the resume landing page."
-  type = string
-  default = "Richard Alvarez"
+variable "appgw_subnet_prefix" {
+  description = "Address prefix for the Application Gateway subnet."
+  type = list(string)
+  default = ["10.10.1.0/24"]
+
 }
 
-variable "vmss_sku" {
-  description = "VM size for the VMSS instances."
-  type = string
-  default = "Standard_B1s"
+variable "webvmss_subnet_prefix" {
+  description = "Address prefix for the web-tier VMSS subnet."
+  type = list(string)
+  default = ["10.10.2.0/24"]
 }
 
-variable "vmss_initial_instance_count" {
-  description = "Initial number of VMSS instances."
-  type = number
-  default = 2
+variable "appvmss_subnet_prefix" {
+  description = "Address prefix for the app-tier VMSS subnet."
+  type = list(string)
+  default = ["10.10.3.0/24"]
 }
 
-variable "vmss_min_instance_count" {
-  description = "Minimum number of VMSS instances."
-  type = number
-  default = 1
+variable "private_endpoint_subnet_prefix" {
+  description = "Address prefix for the private endpoint subnet."
+  type = list(string)
+  default = ["10.10.4.0/24"]
 }
 
-variable "vmss_max_instance_count" {
-  description = "Maximum number of VMSS instances."
-  type = number
-  default = 4
-}
-
-variable "sql_admin_username" {
-  description = "SQL Admin Username."
-  type = string
-  default = "richiesqladmin"
-}
-
-variable "sql_database_sku" {
-  description = "Azure SQL Database SKU."
-  type = string
-  default = "GP_Gen5_2"
-}
-
-variable "sql_zone_redundant" {
-  description = "Whether Azure SQL Database should use zone redundancy. Some regions/SKUs may not support this!"
-  type = bool
-  default = true
-}
-
-variable "alert_email" {
-  description = "Email address for Azure Monitor action group alerts."
-  type = string
+variable "bastion_subnet_prefix" {
+  description = "Address prefix for the Azure Bastion subnet."
+  type = list(string)
+  default = ["10.10.5.0/26"]
 }

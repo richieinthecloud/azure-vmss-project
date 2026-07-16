@@ -1,13 +1,13 @@
 # i want this subnet to be 10.10.2.0/24
 
 resource "azurerm_linux_virtual_machine_scale_set" "web-vmss" {
-  name = "vmss-${local.name_prefix}"
-  location = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  name = "web-vmss-${var.name_prefix}"
+  location = var.location
+  resource_group_name = var.resource_group_name
 
   sku = var.vmss_sku
-  instances = var.vmss_initial_instance_count
-  zones = ["1", "2", "3"]
+  instances = var.instance_count
+  zones = var.availability_zones
 
   admin_username = var.admin_username
   disable_password_authentication = true
@@ -36,71 +36,25 @@ resource "azurerm_linux_virtual_machine_scale_set" "web-vmss" {
   }
 
   network_interface {
-    name = "nic-vmss"
+    name = "nic-vmss-web"
     primary = true
 
     ip_configuration {
-      name = "ipconfig-vmss"
+      name = "ipconfig-vmss-web"
       primary = true
-      subnet_id = azurerm_subnet.vmss_subnet.id
+      subnet_id = var.subnet.id
 
       application_gateway_backend_address_pool_ids = [
-        one(azurerm_application_gateway.appgw.backend_address_pool).id
+        var.appgw_backend_address_pool_id
       ]
     }
   }
 
-  custom_data = base64encode(<<-EOF
-    #!/bin/bash
-    apt-get update -y
-    apt-get install -y nginx
-    
-    cat > /var/www/html/index.html <<HTML
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title> Azure Resume Project</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background: #f4f7fb;
-                margin: 0;
-                padding: 40px;
-                color: #222;
-            }
-            .card {
-                background: white;
-                padding: 32px;
-                border-radius: 12px;
-                max-width: 800px;
-                margin: 800px;
-                box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-            }
-            h1 {
-                color: #0078d4
-            }
-            </style>
-        </head>
-        <body>
-            <div class="card">
-                <h1>${var.resume_name}</h1>
-                <h2>Azure Cloud Engineering Portfolio</h2>
-                <p>This resume website is running on an Azure Virtual Machine Scale Set behind an Application Gateway WAF. </p>
-                <p>The infrastructure was deployed using Terraform.</p>
-                <p>Backend instances are private and reachable administratively through Azure Bastion</p>
-            </div>
-        </body>
-    </html>
-HTML
+  custom_data = base64encode(templatefile("${path.module}/templates/cloud-init.sh.tpl",
+  {
+    resume_name = var.resume_name
+    internal_lb_frontend_ip = var.internal_lb_frontend_ip
+  }))
 
-        systemctl enable nginx
-        systemctl restart nginx
-    EOF
-    )
-
-    tags = local.common_tags
-
-    depends_on = [
-        azurerm_application_gateway.appgw
-    ]
+  tags = var.tags
 }
