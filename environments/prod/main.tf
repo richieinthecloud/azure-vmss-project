@@ -21,8 +21,8 @@ module "network" {
 
   address_space                  = var.address_space
   appgw_subnet_prefix            = var.appgw_subnet_prefix
-  webvmss_subnet_prefix              = var.web_subnet_prefix
-  appvmss_subnet_prefix              = var.app_subnet_prefix
+  webvmss_subnet_prefix          = var.web_subnet_prefix
+  appvmss_subnet_prefix          = var.app_subnet_prefix
   private_endpoint_subnet_prefix = var.private_endpoint_subnet_prefix
   bastion_subnet_prefix          = var.bastion_subnet_prefix
 }

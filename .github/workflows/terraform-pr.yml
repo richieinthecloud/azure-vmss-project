@@ -21,7 +21,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: environments/vmss-demo
+        working-directory: environments/dev
 
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}

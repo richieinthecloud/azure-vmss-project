@@ -16,9 +16,9 @@
 
 terraform {
   backend "azurerm" {
-    resource_group_name = "tfstate-remotebackend"
+    resource_group_name  = "tfstate-remotebackend"
     storage_account_name = "vmssdemobackendrichie"
-    container_name = "tfstate"
-    key = "prod.terraform.tfstate"
+    container_name       = "tfstate"
+    key                  = "prod.terraform.tfstate"
   }
 }

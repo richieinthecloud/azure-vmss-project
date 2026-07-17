@@ -38,7 +38,7 @@ resource "azurerm_lb_rule" "app_http" {
     protocol = "Tcp"
     frontend_port = var.backend_port
     backend_port = var.backend_port
-    frontend_ip_configuration_name = "ilb-app-frontend"
+    frontend_ip_configuration_name = "ilb-frontend-ip"
     backend_address_pool_ids = [azurerm_lb_backend_address_pool.app.id]
     probe_id = azurerm_lb_probe.app_http.id
 }
