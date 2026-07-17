@@ -4,7 +4,7 @@ set -euo pipefail
 apt-get update -y
 apt-get install -y nginx
 
-cat > /var/www/html/index/html <<HTML 
+cat > /var/www/html/index.html <<HTML 
 <!DOCTYPE html>
 <html>
 <head>

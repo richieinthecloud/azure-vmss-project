@@ -119,8 +119,8 @@ resource "azurerm_network_security_group" "appgw_nsg" {
 }
 
 resource "azurerm_subnet_network_security_group_association" "appgw" {
-  subnet_id = azurerm_subnet.appgw.id
-  network_security_group_id = azurerm_network_security_group.appgw.id
+  subnet_id = azurerm_subnet.appgw_nsg.id
+  network_security_group_id = azurerm_network_security_group.appgw_nsg.id
 }
 
 #NSG: Web tier subnet VMSS

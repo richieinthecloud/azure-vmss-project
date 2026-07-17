@@ -10,17 +10,17 @@ output "vnet_name" {
 
 output "appgw_subnet_id" {
     description = "ID of the Application Gateway Subnet"
-    value = azurerm_subnet.appgw_subnet.id
+    value = azurerm_subnet.appgw.id
 }
 
-output "webvmss_subnet_id" {
+output "web_subnet_id" {
     description = "ID of the Web VMSS Subnet"
-    value = azurerm_subnet.webvmss_subnet.id
+    value = azurerm_subnet.web-vmss.id
 }
 
-output "appvmss_subnet_id" {
+output "app_subnet_id" {
     description = "ID of the App VMSS Subnet"
-    value = azurerm_subnet.appvmss_subnet.id
+    value = azurerm_subnet.app-vmss.id
 }
 
 output "private_endpoint_subnet_id" {

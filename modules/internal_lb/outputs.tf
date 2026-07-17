@@ -1,4 +1,4 @@
-output "backend_address_pool_ids" {
+output "backend_address_pool_id" {
     description = "ID of the internal load balancer's backend address pool that the app tier VMSS attaches to."
     value = azurerm_lb_backend_address_pool.app.id
 }

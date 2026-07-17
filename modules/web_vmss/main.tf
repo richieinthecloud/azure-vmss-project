@@ -42,7 +42,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "web-vmss" {
     ip_configuration {
       name = "ipconfig-vmss-web"
       primary = true
-      subnet_id = var.subnet.id
+      subnet_id = var.subnet_id
 
       application_gateway_backend_address_pool_ids = [
         var.appgw_backend_address_pool_id
