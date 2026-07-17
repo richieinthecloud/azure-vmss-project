@@ -1,5 +1,6 @@
 #!/bin/bash
 # az login from the terminal first
+# we must initialize the remote backend server separate from the tf scripts
 # ./backend.sh to execute the script
 
 RESOURCE_GROUP_NAME=tfstate-remotebackend
