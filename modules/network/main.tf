@@ -34,7 +34,7 @@ resource "azurerm_subnet" "private_endpoint_subnet" {
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes = var.private_endpoint_subnet_prefix
 
-  private_endpoint_network_policies = "Disabled"
+  private_endpoint_network_policies = "Enabled"
 }
 
 # Azure Bastion requires a subnet specifically name AzureBastionSubnet
@@ -62,7 +62,7 @@ resource "azurerm_network_security_group" "appgw_nsg" {
     access = "Allow"
     protocol = "Tcp"
     source_port_range = "*"
-    destination_port_range = ["80", "443"]
+    destination_port_ranges = ["80", "443"]
     source_address_prefix = "Internet"
     destination_address_prefix = "*"
   }
@@ -327,7 +327,7 @@ resource "azurerm_network_security_group" "bastion_nsg" {
     access = "Allow"
     protocol = "Tcp"
     source_port_range = "*"
-    destination_port_range = ["8080", "5701"]
+    destination_port_ranges = ["8080", "5701"]
     source_address_prefix = "VirtualNetwork"
     destination_address_prefix = "VirtualNetwork"
   }
@@ -339,7 +339,7 @@ resource "azurerm_network_security_group" "bastion_nsg" {
     access = "Allow"
     protocol = "Tcp"
     source_port_range = "*"
-    destination_port_range = ["22", "3389"]
+    destination_port_ranges = ["22", "3389"]
     source_address_prefix = "*"
     destination_address_prefix = "VirtualNetwork"
   }
@@ -363,7 +363,7 @@ resource "azurerm_network_security_group" "bastion_nsg" {
     access = "Allow"
     protocol = "Tcp"
     source_port_range = "*"
-    destination_port_range = ["8080", "5701"]
+    destination_port_ranges = ["8080", "5701"]
     source_address_prefix = "VirtualNetwork"
     destination_address_prefix = "VirtualNetwork"
   }
@@ -386,4 +386,48 @@ resource "azurerm_network_security_group" "bastion_nsg" {
 resource "azurerm_subnet_network_security_group_association" "bastion_nsg" {
   subnet_id = azurerm_subnet.bastion_subnet.id
   network_security_group_id = azurerm_network_security_group.bastion_nsg.id
+}
+
+# -----------------------
+# NAT Gateway: outbound internet for the web and app tiers
+# the web/app VMSS instances have no public IPs. Without this they have no
+# outbound path (default outbound access is retired by Azure), so cloud-init's
+# apt-get install can't reach the Ubuntu repos. App GW, Bastion, and the 
+# private endpoint subnets manager their own egress and are intentionally
+# left off the NAT gateway
+# -----------------------
+  
+resource "azurerm_public_ip" "nat" {
+  name = "pip-nat-${var.name_prefix}"
+  location = var.location
+  resource_group_name = var.resource_group_name
+  allocation_method = "Static"
+  sku = "Standard"
+
+  tags = var.tags
+}
+
+resource "azurerm_nat_gateway" "nat" {
+  name = "nat-${var.name_prefix}"
+  location = var.location
+  resource_group_name = var.resource_group_name
+  sku_name = "Standard"
+  idle_timeout_in_minutes = 4
+
+  tags = var.tags
+}
+
+resource "azurerm_nat_gateway_public_ip_association" "nat" {
+  nat_gateway_id = azurerm_nat_gateway.nat.id
+  public_ip_address_id = azurerm_public_ip.nat.id
+}
+
+resource "azurerm_subnet_nat_gateway_association" "web" {
+  subnet_id = azurerm_subnet.web-vmss.id
+  nat_gateway_id = azurerm_nat_gateway.nat.id
+}
+
+resource "azurerm_subnet_nat_gateway_association" "app" {
+  subnet_id = azurerm_subnet.app-vmss.id
+  nat_gateway_id = azurerm_nat_gateway.nat.id
 }
