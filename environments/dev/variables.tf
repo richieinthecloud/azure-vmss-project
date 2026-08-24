@@ -198,3 +198,9 @@ variable "alert_email" {
   description = "Email address for Azure Monitor action group alerts."
   type        = string
 }
+
+variable "log_retention_in_days" {
+  description = "Retention period (in days) for the Log Analytics workspace."
+  type        = number
+  default     = 30
+}

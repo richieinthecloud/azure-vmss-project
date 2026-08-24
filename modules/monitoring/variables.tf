@@ -24,6 +24,12 @@ variable "alert_email" {
   type        = string
 }
 
+variable "log_retention_in_days" {
+  description = "Retention period (in days) for the Log Analytics workspace."
+  type        = number
+  default     = 30
+}
+
 variable "web_vmss_id" {
   description = "ID of the web tier VMSS to autoscale and alert on."
   type        = string

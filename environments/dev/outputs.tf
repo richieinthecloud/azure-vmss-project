@@ -47,3 +47,8 @@ output "key_vault_name" {
   description = "Key Vault name."
   value       = module.keyvault.key_vault_name
 }
+
+output "log_analytics_workspace_name" {
+  description = "Log Analytics workspace collecting VMSS diagnostics."
+  value       = module.monitoring.log_analytics_workspace_name
+}

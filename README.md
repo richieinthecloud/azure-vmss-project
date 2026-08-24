@@ -103,7 +103,7 @@ Every subnet is isolated by a dedicated NSG enforcing least-privilege ingress:
 | **Secrets** | Azure Key Vault (RBAC) | Generates & stores the SQL admin password; app tier granted `Key Vault Secrets User` via managed identity |
 | **Admin access** | Azure Bastion | Browser/SSH access with no public VM IPs |
 | **Egress** | NAT Gateway | Outbound internet for private tiers |
-| **Observability** | Azure Monitor (autoscale, action group, metric alerts) | Scaling + CPU alerting |
+| **Observability** | Azure Monitor + Log Analytics (autoscale, diagnostics, action group, metric & health alerts) | Scaling, metric retention, CPU/availability/health alerting |
 | **State** | Azure Storage (remote backend) | Terraform state, per environment |
 
 ---
@@ -118,6 +118,17 @@ Both the web and app tiers scale automatically on CPU via `azurerm_monitor_autos
 - **Ceiling:** per-environment via tfvars (dev/prod/dr tuned independently)
 
 This keeps the platform responsive under load while reducing spend during quiet periods.
+
+---
+
+## Monitoring & Alerting
+
+- **Log Analytics workspace** — a per-environment workspace (`log-<prefix>`) collects diagnostics; retention is tunable via `log_retention_in_days` (default 30).
+- **Diagnostic settings** — both VMSS tiers ship their platform metrics (`AllMetrics`) to the workspace for querying and retention. *(Scale-set resources expose metrics only; guest OS logs would require the Azure Monitor Agent + a data collection rule.)*
+- **Alerts** route to a single action group (`ag-alerts-<prefix>`) that emails `alert_email`:
+  - **High CPU** (web & app) — average CPU **> 70%** over 5 min (severity 2).
+  - **VM availability** (web & app) — availability **< 100%** over 5 min, i.e. an instance became unavailable (severity 1).
+  - **Resource health** (web & app) — Azure reports the scale set as **Degraded** or **Unavailable** (activity-log alert).
 
 ---
 
@@ -149,7 +160,7 @@ This keeps the platform responsive under load while reducing spend during quiet 
 │   ├── database/            # Azure SQL, Private Endpoint, Private DNS
 │   ├── keyvault/            # Key Vault + RBAC + generated secrets
 │   ├── bastion/             # Azure Bastion host
-│   ├── monitoring/          # Autoscale, action group, metric alerts
+│   ├── monitoring/          # Log Analytics, diagnostics, autoscale, action group, metric & health alerts
 │   └── storage_account/     # Remote-state backend bootstrap script
 └── .github/workflows/       # terraform-pr.yml (plan) + terraform-apply.yml (apply)
 ```
@@ -223,7 +234,7 @@ The project is structured for **dev**, **prod**, and **dr**, each with its own s
 
 Planned extensions that build on the current foundation:
 
-- **Observability** — a central **Log Analytics Workspace** with diagnostic settings on the Application Gateway (incl. **WAF logs**), SQL, Key Vault, and NSG flow logs; guest-level metrics via the Azure Monitor Agent; availability tests and health-based alerting.
+- **Observability** — a central **Log Analytics Workspace** with VMSS diagnostics and availability/health alerting is now in place (see [Monitoring & Alerting](#monitoring--alerting)). Remaining: extend diagnostic settings to the Application Gateway (incl. **WAF logs**), SQL, Key Vault, and NSG flow logs; add guest-level metrics via the Azure Monitor Agent; add availability tests.
 - **Data protection / backup** — Azure SQL **short-term (PITR) and long-term retention (LTR)** policies; Key Vault soft-delete + purge protection; state storage versioning.
 - **Disaster recovery** — cross-region **SQL failover groups** plus a warm redeploy into the `dr` environment, fronted by **Traffic Manager / Azure Front Door** for regional failover.
 - **TLS** — HTTPS listener on the Application Gateway with a managed certificate.

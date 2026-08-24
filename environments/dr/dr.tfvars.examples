@@ -24,4 +24,5 @@ sql_zone_redundant = false
 
 kv_purge_protection_enabled = true
 
-alert_email = "richie.alvarez94@outlook.com"
+alert_email           = "richie.alvarez94@outlook.com"
+log_retention_in_days = 90

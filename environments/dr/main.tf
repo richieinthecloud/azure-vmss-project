@@ -178,7 +178,8 @@ module "monitoring" {
   location            = azurerm_resource_group.rg.location
   tags                = local.common_tags
 
-  alert_email = var.alert_email
+  alert_email           = var.alert_email
+  log_retention_in_days = var.log_retention_in_days
 
   web_vmss_id                = module.web_vmss.vmss_id
   web_initial_instance_count = var.web_initial_instance_count
