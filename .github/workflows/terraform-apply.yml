@@ -13,6 +13,10 @@ permissions:
   contents: read
   actions: read
 
+concurrency:
+  group: terraform-apply-dev
+  cancel-in-progress: false
+
 jobs:
   terraform-apply:
     name: Terraform Apply Dev
