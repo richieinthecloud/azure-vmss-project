@@ -35,6 +35,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "web-vmss" {
     caching              = "ReadWrite"
   }
 
+  boot_diagnostics {}
+
   network_interface {
     name    = "nic-vmss-web"
     primary = true

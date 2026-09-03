@@ -69,3 +69,13 @@ variable "app_max_instance_count" {
   description = "Maximum number of app tier VMSS instances."
   type        = number
 }
+
+variable "app_gateway_id" {
+  description = "ID of the Application Gateway to collect access and WAF logs from."
+  type        = string
+}
+
+variable "key_vault_id" {
+  description = "ID of the Key Vault."
+  type        = string
+}

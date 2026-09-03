@@ -14,13 +14,13 @@ output "appgw_subnet_id" {
 }
 
 output "web_subnet_id" {
-  description = "ID of the Web VMSS Subnet"
-  value       = azurerm_subnet.web-vmss.id
+  description = "Web tier subnet ID. Sourced from the NAT association so consumers cannot be created until outbound internet exists."
+  value       = azurerm_subnet_nat_gateway_association.web.subnet_id
 }
 
 output "app_subnet_id" {
-  description = "ID of the App VMSS Subnet"
-  value       = azurerm_subnet.app-vmss.id
+  description = "App tier subnet ID. Sourced from the NAT association so consumers cannot be created until outbound internet exists."
+  value       = azurerm_subnet_nat_gateway_association.app.subnet_id
 }
 
 output "private_endpoint_subnet_id" {

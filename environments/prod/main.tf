@@ -190,4 +190,6 @@ module "monitoring" {
   app_initial_instance_count = var.app_initial_instance_count
   app_min_instance_count     = var.app_min_instance_count
   app_max_instance_count     = var.app_max_instance_count
+
+  app_gateway_id = module.app_gateway.application_gateway_id
 }

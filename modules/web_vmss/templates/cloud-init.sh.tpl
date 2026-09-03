@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-apt-get update -y
-apt-get install -y nginx
+apt-get -o DPkg::Lock::Timeout=600 update -y
+apt-get -o DPkg::Lock::Timeout=600 install -y nginx
 
 cat > /var/www/html/index.html <<HTML 
 <!DOCTYPE html>
@@ -54,6 +54,13 @@ NGINX
 # nginx only auto-loads *.conf from conf.d at the http block, so the
 # location block above must be pulled in explicitly inside the server block.
 sed -i '/location \/ {/i\    include /etc/nginx/snippets/app-proxy.conf;' /etc/nginx/sites-available/default
+
+# Route nginx logs to syslog (facility local7) so the Azure Monitor Agent ships
+# them to Log Analytics. Files under /var/log/nginx keep working as well.
+cat > /etc/nginx/conf.d/syslog.conf <<NGINX
+access_log syslog:server=unix:/dev/log,facility=local7,tag=nginx,severity=info combined;
+error_log  syslog:server=unix:/dev/log,facility=local7,tag=nginx,severity=error;
+NGINX
 
 systemctl enable nginx
 systemctl restart nginx

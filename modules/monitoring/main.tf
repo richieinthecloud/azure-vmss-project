@@ -15,7 +15,7 @@ resource "azurerm_log_analytics_workspace" "main" {
 # -------------------------------------
 # Diagnostic settings: ship VMSS platform metrics to the workspace
 # (VMSS scale-set resources expose metrics only; guest OS logs would
-#  require the Azure Monitor Agent + a data collection rule.)
+# require the Azure Monitor Agent + a data collection rule.)
 # -------------------------------------
 
 resource "azurerm_monitor_diagnostic_setting" "web_vmss" {
@@ -333,4 +333,103 @@ resource "azurerm_monitor_activity_log_alert" "health_app" {
   }
 
   tags = var.tags
+}
+
+# Guest OS Log Collection: Azure Monitor Agent + Data Collection Rule
+# Diagnostic settings on a VMSS give platform metrics only.
+# To see what's happening inside the instances (cloud-init, sshd, nginx, kernel) the agent
+# must run in the guest and ship syslog to the workspace under a DCR. 
+
+resource "azurerm_monitor_data_collection_rule" "vmss_syslog" {
+  name                = "dcr-syslog-${var.name_prefix}"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  kind                = "Linux"
+
+  destinations {
+    log_analytics {
+      workspace_resource_id = azurerm_log_analytics_workspace.main.id
+      name                  = "law"
+    }
+  }
+
+  data_flow {
+    streams      = [Microsoft-Syslog]
+    destinations = ["law"]
+  }
+
+  data_sources {
+    syslog {
+      name           = "syslog"
+      streams        = [Microsoft-Syslog]
+      facility_names = ["auth", "authpriv", "cron", "daemon", "kern", "syslog", "user", "local17"]
+      log_levels     = ["Info", "Notice", "Warning", "Error", "Critical", "Alert", "Emergency"]
+    }
+  }
+  tags = var.tags
+}
+
+# the agent extension. In automatic upgrade mode, adding this triggers a rolling update
+# of existing instances; new instances get it at creation. 
+
+resource "azurerm_virtual_machine_scale_set_extension" "monitor_agent" {
+  name                         = "AzureMonitorLinuxAgent"
+  virtual_machine_scale_set_id = var.web_vmss_id
+  publisher                    = "Microsoft.Azure.Monitor"
+  type                         = "AzureMonitorLinuxAgent"
+  type_handler_version         = "1.0"
+  auto_upgrade_minor_version   = true
+  automatic_upgrade_enabled    = true
+}
+
+resource "azurerm_virtual_machine_scale_set_extension" "ama_app" {
+  name                         = "AzureMonitorLinuxAgent"
+  virtual_machine_scale_set_id = var.app_vmss_id
+  publisher                    = "Microsoft.Azure.Monitor"
+  type                         = "AzureMonitorLinuxAgent"
+  type_handler_version         = "1.0"
+  auto_upgrade_minor_version   = true
+  automatic_upgrade_enabled    = true
+}
+
+# bind the rule to each scale set.
+# without the association the agent runs but collects nothing. 
+resource "azurerm_monitor_data_collection_rule_association" "web" {
+  name                    = "dcra-web-${var.name_prefix}"
+  target_resource_id      = var.web_vmss_id
+  data_collection_rule_id = azurerm_monitor_data_collection_rule.vmss_syslog.id
+}
+
+resource "azurerm_monitor_data_collection_rule_association" "app" {
+  name                    = "dcra-app-${var.name_prefix}"
+  target_resource_id      = var.app_vmss_id
+  data_collection_rule_id = azurerm_monitor_data_collection_rule.vmss_syslog.id
+}
+
+
+# Application Gateway logs: access, performance, and WAF.
+# "Dedicated" writes to resource-specific tables 
+# (AGWAccessLogs,AGWFirewallLogs, AGWPerformanceLogs) rather than the catch-all
+# AzureDiagnostics table — much easier to query.
+
+resource "azurerm_monitor_diagnostic_setting" "appgw" {
+  name                           = "diag-appgw-${var.name_prefix}"
+  target_resource_id             = var.app_gateway_id
+  log_analytics_workspace_id     = azurerm_log_analytics_workspace.main.id
+  log_analytics_destination_type = "Dedicated"
+
+  enabled_log { category = "ApplicationGatewayAccessLog" }
+  enabled_log { category = "ApplicationGatewayPerformanceLog" }
+  enabled_log { category = "ApplicationGatewayFirewallLog" }
+
+  enabled_metric { category = "AllMetrics" }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "keyvault" {
+  name                       = "diag-kv-${var.name_prefix}"
+  target_resource_id         = var.key_vault_id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.main.id
+
+  enabled_log { category = "AuditEvent" }
+  enabled_metric { category = "AllMetrics" }
 }
