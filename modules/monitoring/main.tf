@@ -240,6 +240,7 @@ resource "azurerm_monitor_metric_alert" "availability_web" {
 resource "azurerm_monitor_activity_log_alert" "health_web" {
   name                = "alert-health-web-${var.name_prefix}"
   resource_group_name = var.resource_group_name
+  location            = "global"
   scopes              = [var.web_vmss_id]
   description         = "Alert when Azure reports the web tier VMSS as degraded or unavailable"
 
@@ -313,6 +314,7 @@ resource "azurerm_monitor_metric_alert" "availability_app" {
 resource "azurerm_monitor_activity_log_alert" "health_app" {
   name                = "alert-health-app-${var.name_prefix}"
   resource_group_name = var.resource_group_name
+  location            = "global"
   scopes              = [var.app_vmss_id]
   description         = "Alert when Azure reports the app tier VMSS as degraded or unavailable"
 
