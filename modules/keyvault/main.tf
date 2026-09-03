@@ -35,7 +35,7 @@ resource "random_password" "sql_admin_password" {
   special          = true
   override_special = "!#$%&*()-_=+{}[]<>:?"
 }
-# Azure RBAC propogates to the key vault data plane asynchronously. Terraform's depend_on only waits
+# Azure RBAC propagates to the key vault data plane asynchronously. Terraform's depends_on only waits
 # for the role assignment resource to be created, not for the RBAC to take effect. Without this pause
 # the first apply typically fails with 403 forbidden on the secret write. 
 resource "time_sleep" "kv_rbac_propagation" {

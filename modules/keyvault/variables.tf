@@ -1,8 +1,3 @@
-variable "name_prefix" {
-  description = "Naming prefix used for the random component of the Key Vault name."
-  type        = string
-}
-
 variable "environment" {
   description = "Environment name, appended to the Key Vault name for global uniqueness."
   type        = string

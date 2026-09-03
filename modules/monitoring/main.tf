@@ -372,7 +372,7 @@ resource "azurerm_monitor_data_collection_rule" "vmss_syslog" {
 # the agent extension. In automatic upgrade mode, adding this triggers a rolling update
 # of existing instances; new instances get it at creation. 
 
-resource "azurerm_virtual_machine_scale_set_extension" "monitor_agent" {
+resource "azurerm_virtual_machine_scale_set_extension" "ama_web" {
   name                         = "AzureMonitorLinuxAgent"
   virtual_machine_scale_set_id = var.web_vmss_id
   publisher                    = "Microsoft.Azure.Monitor"

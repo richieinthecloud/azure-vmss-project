@@ -115,7 +115,6 @@ module "app_vmss" {
 module "keyvault" {
   source = "../../modules/keyvault"
 
-  name_prefix         = local.name_prefix
   environment         = var.environment
   random_suffix       = random_integer.suffix.result
   resource_group_name = azurerm_resource_group.rg.name

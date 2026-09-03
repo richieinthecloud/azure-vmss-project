@@ -4,7 +4,7 @@ set -euo pipefail
 apt-get -o DPkg::Lock::Timeout=600 update -y
 apt-get -o DPkg::Lock::Timeout=600 install -y nginx
 
-cat > /var/www/html/index.html <<HTML 
+cat > /var/www/html/index.html <<HTML
 <!DOCTYPE html>
 <html>
 <head>

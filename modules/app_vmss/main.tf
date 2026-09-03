@@ -1,5 +1,5 @@
 resource "azurerm_linux_virtual_machine_scale_set" "app" {
-  name                = "vmss-app-${var.name_prefix}"
+  name                = "app-vmss-${var.name_prefix}"
   location            = var.location
   resource_group_name = var.resource_group_name
 

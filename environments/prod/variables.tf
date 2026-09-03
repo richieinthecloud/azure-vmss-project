@@ -13,7 +13,6 @@ variable "environment" {
 variable "owner" {
   description = "Owner tag value."
   type        = string
-  default     = "Richard"
 }
 
 variable "location" {
@@ -101,7 +100,6 @@ variable "appgw_max_capacity" {
 variable "admin_username" {
   description = "Azure admin username for VMSS instances."
   type        = string
-  default     = "richieazureadmin"
 }
 
 variable "ssh_public_key" {
@@ -113,7 +111,6 @@ variable "ssh_public_key" {
 variable "resume_name" {
   description = "Name displayed on the resume landing page."
   type        = string
-  default     = "Richard Alvarez"
 }
 
 variable "vmss_sku" {
@@ -165,7 +162,6 @@ variable "app_max_instance_count" {
 variable "sql_admin_username" {
   description = "SQL Admin Username."
   type        = string
-  default     = "richiesqladmin"
 }
 
 variable "sql_database_sku" {
