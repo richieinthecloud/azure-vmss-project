@@ -13,8 +13,3 @@ output "sql_admin_password" {
   value       = random_password.sql_admin_password.result
   sensitive   = true
 }
-
-output "key_vault_id" {
-  description = "Resource ID of the Key Vault."
-  value       = azurerm_key_vault.kv.id
-}
