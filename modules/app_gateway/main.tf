@@ -1,10 +1,10 @@
 resource "azurerm_public_ip" "appgw" {
-  name = "pip-appgw-${var.name_prefix}"
-  location = var.location
+  name                = "pip-appgw-${var.name_prefix}"
+  location            = var.location
   resource_group_name = var.resource_group_name
-  allocation_method = "Static"
-  sku = "Standard"
-  zones = var.availability_zones
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  zones               = var.availability_zones
 
   tags = var.tags
 }
@@ -15,11 +15,11 @@ resource "azurerm_web_application_firewall_policy" "waf_policy" {
   location            = var.location
 
   policy_settings {
-    enabled = true
-    mode    = var.waf_mode
-    request_body_check = true
+    enabled                     = true
+    mode                        = var.waf_mode
+    request_body_check          = true
     max_request_body_size_in_kb = 128
-    file_upload_limit_in_mb = 100
+    file_upload_limit_in_mb     = 100
   }
 
   managed_rules {
@@ -40,8 +40,8 @@ resource "azurerm_application_gateway" "appgw" {
   firewall_policy_id = azurerm_web_application_firewall_policy.waf_policy.id
 
   sku {
-    name     = "WAF_v2"
-    tier     = "WAF_v2"
+    name = "WAF_v2"
+    tier = "WAF_v2"
   }
 
   autoscale_configuration {
@@ -94,8 +94,8 @@ resource "azurerm_application_gateway" "appgw" {
     name                       = "http-routing-rule"
     rule_type                  = "Basic"
     http_listener_name         = "appgw-http-listener"
-    backend_address_pool_name   = "web-vmss-backend-pool"
-    backend_http_settings_name  = "backend-http-settings"
+    backend_address_pool_name  = "web-vmss-backend-pool"
+    backend_http_settings_name = "backend-http-settings"
     priority                   = 100
   }
 
