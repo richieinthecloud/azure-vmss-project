@@ -192,4 +192,5 @@ module "monitoring" {
   app_max_instance_count     = var.app_max_instance_count
 
   app_gateway_id = module.app_gateway.application_gateway_id
+  key_vault_id   = module.keyvault.key_vault_id
 }

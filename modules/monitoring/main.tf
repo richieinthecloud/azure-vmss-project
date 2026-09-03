@@ -354,15 +354,15 @@ resource "azurerm_monitor_data_collection_rule" "vmss_syslog" {
   }
 
   data_flow {
-    streams      = [Microsoft-Syslog]
+    streams      = ["Microsoft-Syslog"]
     destinations = ["law"]
   }
 
   data_sources {
     syslog {
       name           = "syslog"
-      streams        = [Microsoft-Syslog]
-      facility_names = ["auth", "authpriv", "cron", "daemon", "kern", "syslog", "user", "local17"]
+      streams        = ["Microsoft-Syslog"]
+      facility_names = ["auth", "authpriv", "cron", "daemon", "kern", "syslog", "user", "local7"]
       log_levels     = ["Info", "Notice", "Warning", "Error", "Critical", "Alert", "Emergency"]
     }
   }
