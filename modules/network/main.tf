@@ -80,32 +80,8 @@ resource "azurerm_network_security_group" "appgw_nsg" {
   }
 
   security_rule {
-    name                       = "Allow-HealthProbe-Inbound"
-    priority                   = 220
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "*"
-    source_address_prefix      = "AzureLoadBalancer"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "Allow-AppGW-to-VMSS"
-    priority                   = 230
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "*"
-    source_address_prefix      = azurerm_subnet.appgw.address_prefixes[0]
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
     name                       = "Allow-AzureLoadBalancer-Inbound"
-    priority                   = 240
+    priority                   = 220
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "*"
@@ -357,7 +333,7 @@ resource "azurerm_network_security_group" "bastion_nsg" {
   }
 
   security_rule {
-    name                       = "Allow-BastionHostComes-Outbound"
+    name                       = "Allow-BastionHostComms-Outbound"
     priority                   = 220
     direction                  = "Outbound"
     access                     = "Allow"
@@ -393,7 +369,7 @@ resource "azurerm_subnet_network_security_group_association" "bastion_nsg" {
 # the web/app VMSS instances have no public IPs. Without this they have no
 # outbound path (default outbound access is retired by Azure), so cloud-init's
 # apt-get install can't reach the Ubuntu repos. App GW, Bastion, and the 
-# private endpoint subnets manager their own egress and are intentionally
+# private endpoint subnets manage their own egress and are intentionally
 # left off the NAT gateway
 # -----------------------
 

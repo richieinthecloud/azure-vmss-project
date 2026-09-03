@@ -39,6 +39,10 @@ resource "azurerm_application_gateway" "appgw" {
 
   firewall_policy_id = azurerm_web_application_firewall_policy.waf_policy.id
 
+  # prevents single point of failure on the actual gateway itself
+  # the public IP is zone redudant but the gateway is not. This addresses that. 
+  zones = var.availability_zones
+
   sku {
     name = "WAF_v2"
     tier = "WAF_v2"

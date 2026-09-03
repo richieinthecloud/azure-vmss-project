@@ -3,7 +3,7 @@
 # assigned frontend IP. 
 
 resource "azurerm_lb" "internal_lb" {
-  name                = "ilb-app${var.name_prefix}"
+  name                = "ilb-app-${var.name_prefix}"
   location            = var.location
   resource_group_name = var.resource_group_name
   sku                 = "Standard"
