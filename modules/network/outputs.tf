@@ -32,3 +32,8 @@ output "bastion_subnet_id" {
     description = "ID of the Bastion Subnet"
     value = azurerm_subnet.bastion_subnet.id
 }
+
+output "nat_public_ip" {
+  description = "Public IP the web/app tiers egress from via the NAT Gateway."
+  value = azurerm_public_ip.nat.ip_address
+}

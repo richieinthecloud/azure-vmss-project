@@ -18,4 +18,9 @@ terraform {
 # No credentials or subscription IDs are hardcoded here.
 provider "azurerm" {
   features {}
+
+  # this part is important: this tells the provider to use your Entra ID identity for storage data-plane operations, 
+  # instead of trying to fetch an account key. Without this, creating the artifacts container fails with a 403 error because
+  # we deliberately turned account keys off
+  storage_use_azuread = true
 }
